@@ -1,105 +1,50 @@
 version: "3.7"
+
 services:
- 
-  # postgres:
-  #   container_name: postgres-alerts
-  #   restart: unless-stopped
-  #   image: postgres:latest
-  #   command: postgres -c 'max_connections=250'
-  #   environment:
-  #     POSTGRES_USER: ${DB_USER}
-  #     POSTGRES_PASSWORD: ${DB_PASSWORD}
-  #     POSTGRES_DB: ${DB_NAME}
-  #     PGDATA: /data/postgres
-  #   volumes:
-  #     - postgres:/data/postgres
-  #   ports:
-  #     - "0.0.0.0:${DB_PORT_EXT}:${DB_PORT_INT}"
-  #   healthcheck:
-  #     test: ["CMD-SHELL", "pg_isready -U alerts -d alerts"]
-  #     interval: 5s
-  #     timeout: 5s
-  #     retries: 5
-  #   networks:
-  #     - alerts
- 
-  # memcached:
-  #   image: memcached:latest
-  #   container_name: memcached-alerts
-  #   restart: unless-stopped
-  #   command: memcached -I 50m -m 256
-  #   ports:
-  #     - "127.0.0.1:11211:11211"
-  #   networks:
-  #     - alerts
- 
-  # backend:
-  #   # build:
-  #   #   context: .
-  #   #   dockerfile: backend/Dockerfile
-  #   image: iti-gitlab.iti.gr:5050/ceasefire/alerts/alerts-backend:1.0.0
-  #   container_name: backend-alerts
-  #   restart: unless-stopped
-  #   depends_on:
-  #     postgres:
-  #       condition: service_healthy
-  #   environment:
-  #     - MODE=${MODE}
-  #     - WP6_USER=${WP6_USER}
-  #     - WP6_PASSWORD=${WP6_PASSWORD}
-  #     - WP6_HOST=${WP6_HOST}
-  #     - WP6_PORT=${WP6_PORT}
-  #     - WP6_NAME=${WP6_NAME}
-  #     - DB_USER=${DB_USER}
-  #     - DB_PASSWORD=${DB_PASSWORD}
-  #     - DB_HOST=${DB_HOST}
-  #     - DB_PORT_EXT=${DB_PORT_EXT}
-  #     - DB_PORT_INT=${DB_PORT_INT}
-  #     - DB_NAME=${DB_NAME}
-  #   volumes:
-  #     - ./backend/app/files:/app/app/files
-  #   ports:
-  #     - "0.0.0.0:${BACK_FM_PORT}:${BACK_FM_PORT}"
-  #   networks:
-  #     - alerts
- 
-  # frontend:
-  #   build:
-  #     context: .
-  #     dockerfile: frontend/Dockerfile
-  #   container_name: frontend-alerts
-  #   restart: unless-stopped
-  #   ports:
-  #     - "0.0.0.0:14000:14000"
-  #   networks:
-  #    - alerts
- 
   nginx:
     image: nginx:latest
     container_name: nginx
     labels:
       io.portainer.accesscontrol.teams: /certh
     ports:
-      - "5173:80"
+      - "80:80"    # Changed from 5173 for HTTP
+      - "443:443"  # Added HTTPS port
     restart: unless-stopped
     volumes:
       - ./distVDockerHarbor:/var/www/html
       - ./nginx:/etc/nginx/conf.d
+      - ./certbot/conf:/etc/letsencrypt  # Added for SSL certificates
+      - ./certbot/www:/var/www/certbot   # Added for ACME challenges
     networks:
       - alerts
- 
-  # certbot:
-  #   image: certbot/certbot
-  #   container_name: certbot
-  #   restart: unless-stopped
-  #   volumes:
-  #     - ./certbot/conf:/etc/letsencrypt
-  #     - ./certbot/www:/var/www/certbot
-  #   entrypoint: "/bin/sh -c 'trap exit TERM; while :; do rm -rf /etc/letsencrypt/renewal/*-0001.conf; certbot renew; sleep 24h & wait $${!}; done;'"
- 
+    command: >
+      sh -c "nginx -g 'daemon off;' & while :; do sleep 6h; nginx -s reload; done"
+
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    restart: unless-stopped
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+      - ./nginx:/etc/nginx/conf.d  # Share nginx config
+    networks:
+      - alerts
+    depends_on:
+      - nginx
+    command: >
+      sh -c "certbot certonly --webroot -w /var/www/certbot
+      --email your-email@example.com
+      -d cyberpatrol-pilots.ceasefire-project.eu
+      -d www.cyberpatrol-pilots.ceasefire-project.eu
+      --agree-tos --non-interactive --keep-until-expiring
+      && cp /etc/letsencrypt/options-ssl-nginx.conf /etc/nginx/conf.d/
+      && cp /etc/letsencrypt/ssl-dhparams.pem /etc/nginx/conf.d/
+      && trap exit TERM; while :; do certbot renew; sleep 12h; done"
+
 networks:
   alerts:
     driver: bridge
- 
+
 volumes:
   postgres:
