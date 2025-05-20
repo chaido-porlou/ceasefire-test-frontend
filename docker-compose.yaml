@@ -34,7 +34,7 @@ services:
       - nginx
     command: >
       sh -c "certbot certonly --webroot -w /var/www/certbot
-      --email your-email@example.com
+      --email kostisfl@iti.gr
       -d cyberpatrol-pilots.ceasefire-project.eu
       -d www.cyberpatrol-pilots.ceasefire-project.eu
       --agree-tos --non-interactive --keep-until-expiring
