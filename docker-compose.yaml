@@ -80,7 +80,7 @@ services:
     labels:
       io.portainer.accesscontrol.teams: /certh
     ports:
-      - "80:80"
+      - "5173:80"
     restart: unless-stopped
     volumes:
       - ./distVDockerHarbor:/var/www/html
