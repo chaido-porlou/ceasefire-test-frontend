@@ -81,7 +81,7 @@ services:
       - "80:80"
     restart: unless-stopped
     volumes:
-      - ./distVDocker2:/var/www/html
+      - ./distVDockerHarbor:/var/www/html
       - ./nginx:/etc/nginx/conf.d
     networks:
       - alerts
