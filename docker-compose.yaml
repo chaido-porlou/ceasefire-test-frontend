@@ -24,6 +24,8 @@ services:
     image: certbot/certbot
     container_name: certbot
     restart: unless-stopped
+    labels:
+      io.portainer.accesscontrol.teams: /certh
     volumes:
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
@@ -45,6 +47,3 @@ services:
 networks:
   alerts:
     driver: bridge
-
-volumes:
-  postgres:
