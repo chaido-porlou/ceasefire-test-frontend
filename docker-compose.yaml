@@ -38,7 +38,7 @@ services:
     entrypoint: sh
     command: -c "
       echo 'Waiting for nginx to be ready...';
-      until curl -s http://nginx-ssl/.well-known/acme-challenge/ >/dev/null; do
+      until wget -q --spider http://nginx-ssl/.well-known/acme-challenge/; do
         echo 'Still waiting for nginx...';
         sleep 2;
       done;
