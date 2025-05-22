@@ -12,7 +12,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./distVDockerHarbor:/var/www/html
-      - ./nginx/templates:/etc/nginx/templates:ro
+      - ./nginx/templates:/etc/nginx/conf.d
       - ./letsencrypt:/etc/letsencrypt
       - ./certbot/data:/var/www/certbot  # Added for ACME challenges
 
