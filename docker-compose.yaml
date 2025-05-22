@@ -51,8 +51,8 @@ services:
           -d cyberpatrol-pilots.ceasefire-project.eu \
           -d www.cyberpatrol-pilots.ceasefire-project.eu \
           --agree-tos --non-interactive --keep-until-expiring \
-        && cp /etc/letsencrypt/options-ssl-nginx.conf /etc/nginx/conf.d/ \
-        && cp /etc/letsencrypt/ssl-dhparams.pem /etc/nginx/conf.d/ \
+        && cp /etc/letsencrypt/options-ssl-nginx.conf /etc/nginx/conf.d/http.conf  \
+        && cp /etc/letsencrypt/ssl-dhparams.pem /etc/nginx/conf.d/http.conf  \
         && trap exit TERM; while :; do certbot renew; sleep 12h; done
       "
 networks:
