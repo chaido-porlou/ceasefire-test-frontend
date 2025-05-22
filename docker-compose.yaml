@@ -31,11 +31,12 @@ services:
     volumes:
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
-      - ./nginx:/etc/nginx/conf.d/http.conf  # Share nginx config
+      # - ./nginx:/etc/nginx/conf.d/http.conf  # Share nginx config
     networks:
       - alerts
     depends_on:
       - nginx-ssl
+    entrypoint: sh
     command: c "
         echo 'Waiting for nginx to be ready...';
         until curl -s http://nginx-ssl/.well-known/acme-challenge/ >/dev/null; do
