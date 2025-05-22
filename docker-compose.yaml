@@ -12,7 +12,9 @@ services:
     restart: unless-stopped
     volumes:
       - ./distVDockerHarbor:/var/www/html
-      - ./nginx:/etc/nginx/conf.d
+      # - ./nginx:/etc/nginx/conf.d
+      - ./nginx/http.conf:/etc/nginx/conf.d/http.conf
+      - ./nginx/https.conf:/etc/nginx/conf.d/https.conf
       - ./certbot/conf:/etc/letsencrypt  # Added for SSL certificates
       - ./certbot/www:/var/www/certbot   # Added for ACME challenges
     networks:
