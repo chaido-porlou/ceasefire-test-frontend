@@ -37,7 +37,11 @@ services:
       - nginx-ssl
     entrypoint: sh
     command: -c "
-      
+      echo 'Waiting for nginx to be ready...';
+      until wget -q --spider http://nginx-ssl/.well-known/acme-challenge/; do
+        echo 'Still waiting for nginx...';
+        sleep 2;
+      done;
 
       echo 'Nginx is ready, running certbot...';
       certbot certonly --webroot -w /var/www/certbot \
