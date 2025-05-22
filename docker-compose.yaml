@@ -50,7 +50,8 @@ services:
         -d www.cyberpatrol-pilots.ceasefire-project.eu \
         --agree-tos --non-interactive --keep-until-expiring \
       && trap exit TERM; while :; do certbot renew; sleep 12h; done
-    "
+      "
+
 networks:
   alerts:
     driver: bridge
