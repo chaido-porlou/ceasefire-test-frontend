@@ -24,6 +24,7 @@ services:
       io.portainer.accesscontrol.teams: /certh
     volumes:
       - ./letsencrypt:/etc/letsencrypt
+      - ./letsencrypt:/etc/letsencrypt-host 
       - ./certbot/data:/var/www/certbot  # Added for ACME challenges
     depends_on:
       - nginx-ssl
@@ -32,4 +33,7 @@ services:
              --email kostisfl@iti.gr --agree-tos --no-eff-email
              -d cyberpatrol-pilots.ceasefire-project.eu 
              -d www.cyberpatrol-pilots.ceasefire-project.eu
+             --rsa-key-size 4096
+             --key-type rsa
+             --post-hook "mkdir -p /etc/letsencrypt; cp -r /etc/letsencrypt/* /etc/letsencrypt-host/"
 
