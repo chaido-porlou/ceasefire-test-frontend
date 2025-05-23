@@ -10,6 +10,8 @@ services:
       - "80:80"    # Changed from 5173 for HTTP
       - "443:443"  # Added HTTPS port
     restart: unless-stopped
+    networks:
+      - ceasefire-test-backend-dev_alerts
     volumes:
       - ./distVDockerHarbor4:/var/www/html
       - ./nginx/templates:/etc/nginx/conf.d
