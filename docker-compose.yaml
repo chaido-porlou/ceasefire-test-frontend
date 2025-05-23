@@ -16,7 +16,7 @@ services:
       - ./letsencrypt:/etc/letsencrypt
       - ./certbot/data:/var/www/certbot  # Added for ACME challenges
     networks:
-      - alerts
+      - ceasefire-test-backend-dev_alerts
 
   certbot:
     image: certbot/certbot:latest
@@ -39,5 +39,5 @@ services:
              --key-type rsa
              --post-hook "mkdir -p /etc/letsencrypt; cp -r /etc/letsencrypt/* /etc/letsencrypt-host/"
 networks:
-  alerts:
+  ceasefire-test-backend-dev_alerts:
     external: true
