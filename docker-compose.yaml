@@ -15,6 +15,8 @@ services:
       - ./nginx/templates:/etc/nginx/conf.d
       - ./letsencrypt:/etc/letsencrypt
       - ./certbot/data:/var/www/certbot  # Added for ACME challenges
+    networks:
+      - alerts
 
   certbot:
     image: certbot/certbot:latest
@@ -36,4 +38,6 @@ services:
              --rsa-key-size 4096
              --key-type rsa
              --post-hook "mkdir -p /etc/letsencrypt; cp -r /etc/letsencrypt/* /etc/letsencrypt-host/"
-
+networks:
+  alerts:
+    external: true
