@@ -11,7 +11,7 @@ services:
       - "443:443"  # Added HTTPS port
     restart: unless-stopped
     volumes:
-      - ./distVDockerHarbor2:/var/www/html
+      - ./distVDockerHarbor3:/var/www/html
       - ./nginx/templates:/etc/nginx/conf.d
       - ./letsencrypt:/etc/letsencrypt
       - ./certbot/data:/var/www/certbot  # Added for ACME challenges
